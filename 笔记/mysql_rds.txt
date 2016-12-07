@@ -1,0 +1,4 @@
+SHOW VARIABLES LIKE 'log_bin'; 查看bin_log是否开启
+
+
+show variables like 'slow_query_log';

@@ -1,0 +1,18 @@
+svnadmin create
+
+fs.file-max=8192
+
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_tw_recycle = 1
+net.ipv4.tcp_fin_timeout = 30
+
+用netstat命令去统计服务器目前的网络连接状态
+netstat -n|awk '/^tcp/{++S[$NF]}END{for(a in S) print a,S[a]}'
+ 
+netstat -an | awk '/:80/{print $6}' | sort | uniq -c
+
+查找打开文件最多的信息如下： 
+lsof -n|awk '{print $2}'|sort|uniq -c |sort -nr|more
+
+查看各个进程打开的文件数据量：
+ lsof -n |awk '{print $2} " " $3'|sort|uniq -c |sort -nr|more

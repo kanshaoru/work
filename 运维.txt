@@ -1,0 +1,140 @@
+﻿wifi:kilimall-shanghai  密码:kilimall2016
+
+路由器信息
+
+管理地址：10.0.0.1
+
+用户名：admin
+abc123$%^
+密码：Admin@123
+
+AP信息
+管理地址：
+192.168.1.100
+192.168.1.101
+192.168.1.102
+
+用户名：admin
+密码：admin
+
+ 
+SSID:kilimall-shanghai
+
+密码：kilimall2016
+
+aws 登陆(old)
+登陆URL:https://116925826047.signin.aws.amazon.com/console
+帐号：operator
+密码：Kilimall2016!@#
+
+aws 登陆(new)
+https://116925826047.signin.aws.amazon.com/console
+kevin.kan
+abc123$%^     OkH[AZl7)xTN(变更前)
+
+allen@kilimall.com
+kiliaws12#$
+
+正式环境：ec2-user@52.68.15.166 Kilimall-BBC
+    测试环境：ec2-user@52.196.66.11 Kilimall-Testing
+    OMS：ec2-user@52.68.76.31Kilimall-OMS
+
+    正式 DB KENYA
+    52.192.119.113
+    kilimall_kenya
+    mysql@kilimall.com!
+    kilimall_kenya
+
+    正式 DB UGANDA
+    52.192.119.113
+    kilimall_uganda
+    mysql@kilimall.com!
+    kilimall_uganda
+
+    中国服务器
+    www.kilimall.cn 
+    administrator   
+    kili@Kenya#0701
+
+后台系统
+http://pms.kilimall.cn/
+kevin.kan = 52Kilimall
+
+mail.kilimall.com 邮箱地址
+账号：kevin.kan
+密码：52kilimall
+
+
+
+
+http://admin.kilimall.co.ug/    客户端文件上传CDN
+http://admin.kilimall.co.ke/index.php  肯尼亚的客户端后台上传地址，进入网页后 手机端>>>下载设置 修改版本号。
+
+
+wiki.kilimall.com  kevin.kan  52Kilimall
+
+/var/www/html/cps/378u/openx-2.4.7/variables.php  155
+
+lipaPay
+lipaPay_abc@(2w!
+
+
+\\10.0.0.151\sambashare 公司内部共享文件夹。 账号：sambashare  密码：kilimall2016
+
+jira
+admin dxrqcf27 是管理账号，网址 http://52.68.76.31:8080/secure/Dashboard.jspa
+
+https://intl.aliyun.com/zh  阿里云国外
+帐号：allen@kilimall.com
+密码：52Kilimall!@#$
+
+
+mysql(旧OMS)  52.192.4.214  username=kilimall      password=mysql#kilimall.com! 
+
+admin dxrqcf27 是管理账号，网址 http://52.68.76.31:8087/secure/Dashboard.jspa   jira地址和账号 
+
+
+BI系统机器的账号密码
+外网：52.197.178.125  内网：172.31.28.12  BI后台服务器，登录账号：admin 端口：16789
+外网：52.197.70.221   内网：172.31.21.62  BI后台数据库，登录账号：admin 端口：16789
+
+
+oms  crontab
+*/1 * * * *       /usr/local/php/bin/php /www/webs/preview/kenya/yii cron/sms
+*/5 * * * *       /usr/local/php/bin/php /www/webs/preview/kenya/yii cron/oms_api
+*/1 * * * *       /usr/local/php/bin/php /www/webs/preview/kenya/yii cron/fbkstorage
+*/1 * * * *       /usr/local/php/bin/php /www/webs/preview/kenya/yii cron/crontaboms
+*/5 * * * *       /usr/local/php/bin/php /www/webs/preview/preview/yii cron/oms_api
+*/1 * * * *       /usr/local/php/bin/php /www/webs/preview/preview/yii cron/fbkstorage
+*/1 * * * *       /usr/local/php/bin/php /www/webs/preview/preview/kenya/yii cron/crontaboms
+
+testing crontab
+*/6 * * * *  /usr/local/php/bin/php  /www/webs/testing/kenya/crontab/index.php mobile_topup
+
+jira 管理员账号：admin  密码：dxrqcf27
+
+
+
+s3://image-s3.kilimall.co.ug/mobile/special_html/747e25db8c05889ab626314e67b54e51.html
+
+oracle阿里云管理密码938137
+
+https://intl.aliyun.com/marketplace/detail.htm?spm=a3c0i.7848310.120950.14.bPlrdH#/detail/code=cmjj011486
+
+
+账号：KILIMALL  密码：mysql@kilimall.com!!
+mysql#kilimall.c0m!!
+
+足够了
+您登陆设备web界面，然后打开web右下角的CLI控制台，再输入 sys回车
+然后输入 firewall zone trust
+再输入 detect pptp
+再输入 firewall zone untrust
+再输入 detect pptp
+再输入interface Dialer 0
+再输入detect pptp
+再输interface Vlanif 1
+再输入detect pptp
+然后收入组return
+然后输入return
+再输入 save

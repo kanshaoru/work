@@ -1,0 +1,5 @@
+s3桶添加文件
+然后用存储过程执行
+exec msdb.dbo.rds_restore_database 
+        @restore_db_name='kilimalldms', 
+        @s3_arn_to_restore_from='arn:aws:s3:::kilimall-sqlserver/sqlserver/20160914.bak';

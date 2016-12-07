@@ -1,0 +1,18 @@
+git remote add origin ssh://git@10.0.0.167/git/.git
+记住git的远程仓库的地址写法
+一般个人使用，用git init，这时候你的工作区也在这里。
+你要是想建立一个固定的地址让大家一起用，就在服务器上用git --bare init
+
+git push remote error解决办法  
+[receive]
+denyCurrentBranch = false
+
+
+git fetch
+git checkout origin/master -- path/to/file
+
+git checkout origin/master -- admin/templates/default/goods_class.edit.php
+
+git checkout origin/master -- wap/js/common.js
+
+

@@ -1,0 +1,30 @@
+input{
+    beats{
+        port => 5044
+    }
+}
+
+filter{
+    if [type] == "ngxAccess" {
+        grok {
+            match => { "message" => "%{COMBINEDAPACHELOG}"}
+        }
+        geoip {
+            source => "clientip"
+        }
+    }
+    if [type] =~ "mss|sms|sso|nss|oas|pop|bms|cms" {
+        multiline{
+            pattern => "^\s"
+            what => "previous"
+        }
+    }
+}
+
+output{
+    elasticsearch{
+        hosts => "192.168.2.160"
+        index => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
+        document_type => "%{[@metadata][type]}"
+    }
+}

@@ -1,0 +1,185 @@
+最新版本elk是拿官网上的最近安装包安装配置的，加了filebeat。
+一. 环境准备
+	1.系统centos6.6
+	2.测试机四台。ip分别192.168.2.155  192.168.2.156  192.168.2.157  192.168.2.160
+	3.192.168.2.160安装elasticsearch,logstash,kibana,四台机器全部安装filebeat
+
+二. 下载安装包
+	1.安装包下载原则上从官网上下载，官网地址，https://www.elastic.co/
+	2.logstash,filebeat,elasticsearch安装RPM包，kibana安装tar包
+	3.使用版本：kibana-4.3.1，elasticsearch-2.1.1，logstash-2.1.1，filebeat-1.0.1
+	4.下载包存放目录：/software
+
+三. 安装和启动elasticsearch
+	1. useradd -r elasticserch
+	2. cd /software
+	3. tar -zxvf elasticsearch-2.1.1.tar.gz -C /usr/local/elasticserch
+	4. chown -R elasticserch.elasticserch /usr/local/elasticserch
+	5. 配置elasticsearch
+		vi /usr/local/elasticserch
+		cluster.name: gxbsy 
+		node.name: node-192.168.2.160
+		node.rack: r1
+		path.data: /tmp/elk/data
+		path.logs: /tmp/elk/logs
+		bootstrap.mlockall: true
+		network.host: 192.168.2.160
+		http.port: 9200
+	6. mkdir /tmp/elk/date
+	   mkdir /tmp/elk/logs
+	   chown -R elasticserch.elasticserch /tmp/elk
+	7. su elasticserch
+	   cd /usr/local/elasticserch/bin
+	   ./elasticserch -d
+四. 安装、配置、启动logstash
+	1. cd /software
+	2. rpm -ivh logstash-2.1.1-1.noarch.rpm
+	3. 配置logstash
+	   mkdir /etc/logstash/conf.d 创建一个logstash的配置目录
+	   cd /etc/logstash/conf.d
+	   vi logstash_filebeat_index 配置如下：
+input{
+    beats{
+        port => 5044
+    }
+}
+
+filter{
+    if [type] == "ngxAccess" {
+        grok {
+            match => { "message" => "%{COMBINEDAPACHELOG}"}
+        }
+        geoip {
+            source => "clientip"
+        }
+    }
+    if [type] =~ "mss|sms|sso|nss|oas|pop|bms|cms" {
+        multiline{
+            pattern => "^\s"
+            what => "previous"
+        }
+    }
+}
+
+output{
+    elasticsearch{
+        hosts => "192.168.2.160"
+        index => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
+        document_type => "%{[@metadata][type]}"
+    }
+}
+	
+	4. 启动logstash
+	service logstash start
+	logstash的日志文件在/var/log/logstash 文件夹中
+
+五. 安装配置filebeat
+	1.filebeat是每台机器都需要安装的。
+	2.cd /software
+	3.rpm -ivh filebeat-1.0.1-x86_64.rpm
+	4.配置filebeat
+	  vim /etc/filebeat/filebeat.yml
+filebeat:
+  prospectors:
+    -
+      paths:
+        - "/var/log/*.log"           
+###这是指定获取日志的目录，如果多条可如下：
+filebeat:
+  prospectors:
+    -
+      paths:
+        - /var/log/system.log
+        - /var/log/wifi.log
+    -
+      paths:
+        - "/var/log/apache/*"
+
+开启logstash收集filebeat数据（公司生产环境使用的是logstash收集日志）
+output:
+  logstash:
+    hosts: ["127.0.0.1:5044"]
+	
+下面这个是elasticsearch收集filebeat日志的（公司未使用这种方式，是否正确待验证）
+（Filebeat开始之前,您需要加载索引模板,这让Elasticsearch知道哪些字段应该分析方法。 curl -XPUT 'http://192.168.2.160:9200/_template/filebeat?pretty' -d@/etc/filebeat/filebeat.template.json）
+
+
+	5.启动filebeat
+	service filebeat start
+
+六. 安装、配置kibana
+	1.进入192.168.2.160的软件包目录 
+	  cd /software
+	  
+	2.tar -zxvf kibana-4.3.1-linux-x64.tar.gz -C /var/www/html/kibana
+	
+	3.配置kibana
+	vi /var/www/html/kibana/config/kibana.yml  修改以下内容：
+	elasticsearch.url: "http://192.168.2.160:9200"
+	
+	4.启动kibana
+	/var/www/html/kibana/bin/kibana
+	
+	5.测试kibana连接
+	http://192.168.2.160:5601
+	应该会直接出来elk的图形分布界面
+	
+	6.settings --> indices --> Add New 根据提示添加elasticsearch的索引，索引应该是 filebeat-*
+	如果不知道索引是什么或者索引不能创建（找不到对应的索引），可以在elasticsearch这台机器
+	上用 curl '192.168.2.160:9200/_cat/indices?v' 查看现有的elasticsearch索引
+	如果不需要的索引可以用：curl -XDELETE 'http://localhost:9200/filebeat-2016.01.11' 删除,后面的filebeat-2016.01.11是被删除的索引名称。
+	
+七. 补充（需要注意的地方，现在已经给出的logstash配置已经上了java的日志显示，但是还是得关注这个问题）
+    由于filebeat拿到的数据展示到kibana上的时候展示java报错会出现一行一行显示不能段展示，所以filebeat收集的日志传给logstash后需要通过一定格式的配置来解决这个问题，
+	用logstash的配置规则来解决这个问题，然后由logstash直接提供给elasticsearch，再由elasticsearch把整理后的数据传到kibana展示出来。	
+	具体的展示java报错的logstash的input部分配置为（这个是直接在java机器上装logstash的办法）：
+input {
+  file {
+    path => "/var/log/someapp.log"
+    codec => multiline {
+      pattern => "^%{TIMESTAMP_ISO8601} "
+      negate => true
+      what => previous
+    }
+  }
+}
+	
+	如果是从filebeat到入到logstash的文件可以在filter 中解决这个问题，具体参考下面的第二段规则。
+	filter{
+    if [type] == "ngxAccess" {
+        grok {
+            match => { "message" => "%{COMBINEDAPACHELOG}"}
+        }
+        geoip {
+            source => "clientip"
+        }
+    }
+    if [type] =~ "mss|sms|sso|nss|oas|pop|bms|cms" {
+        multiline{
+            pattern => "^\s"
+            what => "previous"
+        }
+    }
+}
+	
+
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

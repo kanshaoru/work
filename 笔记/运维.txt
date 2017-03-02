@@ -119,3 +119,7 @@ jira 管理员账号：admin  密码：dxrqcf27
 账号：KILIMALL   密码：mysql#kilimall.c0m!!
 
 s3://image-s3.kilimall.co.ug/mobile/special_html/747e25db8c05889ab626314e67b54e51.html
+
+git账号：
+kilimall
+git@kilimall.c0m$%TG8(

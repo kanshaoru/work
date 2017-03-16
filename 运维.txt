@@ -140,3 +140,6 @@ mysql#kilimall.c0m!!
 再输入 save
 
 git密码：abc123$%^&UJM*IK<.c0m
+
+elk数据库root密码：
+abc123$%^&UJM.c0m

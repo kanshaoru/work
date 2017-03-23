@@ -32,3 +32,37 @@ vim /etc/ld.so.conf.d/local.conf     # 编辑库文件
 /usr/local/lib                       # 添加该行
 :wq                                  # 保存退出
 ldconfig -v                          # 使之生效
+
+报错：configure: error: Cannot find libmysqlclient under /usr/local/mysql/.
+Note that the MySQL client library is not bundled anymore!
+应该是由于我使用了--with-libdir=lib64参数有关，解决办法 :
+cd /usr/local/mysql/
+ln -s lib lib6
+
+
+报错：
+ln -s /usr/local/mysql/lib/libmysqlclient.so /usr/lib/
+ln -s /usr/local/mysql/lib/libmysqlclient.so.18 /usr/lib/libmysqlclient.so.18
+
+./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --with-mysqli=/usr/local/mysql/bin/mysql_config --with-iconv-dir=/usr/local --with-freetype-dir --with-jpeg-dir --with-png-dir --with-zlib --with-gd --enable-gd-native-ttf --with-libxml-dir=/usr --enable-xml --disable-rpath --enable-discard-path --enable-safe-mode --enable-bcmath --enable-shmop --enable-sysvsem --enable-inline-optimization --with-curl --with-curlwrappers --enable-mbregex --enable-fastcgi --enable-fpm --enable-force-cgi-redirect --enable-mbstring --with-mcrypt --with-openssl --with-mhash --enable-pcntl --enable-sockets --with-ldap --with-ldap-sasl --with-xmlrpc --enable-zip --enable-soap --without-pear --with-libdir=lib64 --with-mysql=/usr/local/mysql
+
+
+报错：configure: error: Don't know how to define struct flock on this system, set --enable-opcache=no
+解决：
+环境：CENTOS6.5
+
+PHP5.6.1
+
+编译参数：
+
+./configure --prefix=/usr/local/php56 --with-config-file-path=/usr/local/php56/etc --enable-inline-optimization --disable-rpath --enable-shared --enable-opcache --enable-fpm --with-fpm-user=www --with-fpm-group=www --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --with-gettext --enable-mbstring --with-iconv --with-mcrypt=/usr/local/libmcrytp/ --with-mhash --with-openssl --enable-bcmath --enable-soap --with-libxml-dir --enable-pcntl --enable-shmop --enable-sysvmsg --enable-sysvsem --enable-sysvshm --enable-sockets --with-curl --with-zlib --enable-zip --with-bz2 --with-readline --with-jpeg-dir=/usr/local/jpeg  --with-png-dir=/usr/local/libpng
+
+出错内容：configure: error: Don't know how to define struct flock on this system, set --enable-opcache=no
+
+常见解决办法：
+
+编辑/etc/ld.so.conf
+
+根据系统，加入文件/etc/ld.so.conf，然后执行ldconfig,使其重新加载一次；
+
+有时候，如果自己的libmcrytp(加密算法扩展库)是手动编译的话，只把这个/usr/local/libmcrytp/lib/加入到/etc/ld.so.conf，然后执行ldconfig,使其重新加载一次；

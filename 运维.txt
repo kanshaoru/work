@@ -143,3 +143,6 @@ git密码：abc123$%^&UJM*IK<.c0m
 
 elk数据库root密码：
 abc123$%^&UJM.c0m
+
+
+git服务器登陆密码：root     52Kilimall
